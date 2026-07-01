@@ -3,6 +3,9 @@ backend:
   phases:
     build:
       commands:
+        # Install deps first: the backend phase runs before frontend preBuild,
+        # and the node_modules cache is not guaranteed to be warm.
+        - npm ci
         # Deploys the Amplify Gen 2 backend (auth, data, function) for this branch.
         # $AWS_BRANCH and $AWS_APP_ID are injected by Amplify Hosting.
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
