@@ -1,0 +1,25 @@
+version: 1
+backend:
+  phases:
+    build:
+      commands:
+        # Deploys the Amplify Gen 2 backend (auth, data, function) for this branch.
+        # $AWS_BRANCH and $AWS_APP_ID are injected by Amplify Hosting.
+        - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        # Vite builds the React app to ./dist. It picks up amplify_outputs.json
+        # that pipeline-deploy writes during the backend phase.
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*

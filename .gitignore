@@ -1,0 +1,14 @@
+node_modules
+.amplify
+dist
+.env
+*.local
+.aws
+.DS_Store
+amplify_outputs.json
+amplifyconfiguration.ts
+
+# TS build artifacts
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
