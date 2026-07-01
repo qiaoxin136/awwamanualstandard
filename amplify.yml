@@ -4,8 +4,11 @@ backend:
     build:
       commands:
         # Install deps first: the backend phase runs before frontend preBuild,
-        # and the node_modules cache is not guaranteed to be warm.
-        - npm ci
+        # and the node_modules cache is not guaranteed to be warm. We use
+        # `npm install` (not `npm ci`) because the committed lockfile's bundled
+        # OpenTelemetry/uuid entries don't satisfy `npm ci`'s strict checks
+        # (a known issue with @aws-amplify/backend's transitive deps).
+        - npm install
         # Deploys the Amplify Gen 2 backend (auth, data, function) for this branch.
         # $AWS_BRANCH and $AWS_APP_ID are injected by Amplify Hosting.
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
@@ -13,7 +16,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        # `npm install` rather than `npm ci` for the same reason as the backend
+        # phase (bundled-dep lockfile entries fail `npm ci`'s strict checks).
+        - npm install
     build:
       commands:
         # Vite builds the React app to ./dist. It picks up amplify_outputs.json
